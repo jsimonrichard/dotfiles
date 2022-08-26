@@ -1,0 +1,33 @@
+# Read `man 5 sway` for a complete reference.
+
+output eDP-1 {
+    background ./john-towner-JgOeRuGD_Y4-unsplash.jpg fill
+}
+
+exec swayidle -w \
+    timeout 300 'swaylock -f -c 000000' \
+    timeout 600 'swaymsg "output * dpms off"' resume 'swaymsg "output * dpms on"' \
+    before-sleep 'swaylock -f -c 000000'
+
+input "1739:52710:DLL0945:00_06CB:CDE6_Touchpad" {
+    dwt enabled
+    tap enabled
+    natural_scroll enabled
+    middle_emulation enabled
+}
+
+# Personal settings
+focus_follows_mouse no
+client.focused #8fd4ff #8fd4ff #8fd4ff #8fd4ff #8fd4ff
+default_border pixel 1
+exec_always fcitx5 -d --replace
+
+bar {
+    swaybar_command waybar
+}
+
+include /etc/sway/config.d/*
+include ./keybinds
+
+exec swaylock
+include ./autostart

@@ -1,0 +1,11 @@
+window:
+  tabspaces: 2
+  opacity: 0.5
+
+font:
+  size: 13.0
+  normal:
+    family: "FiraCode"
+    style: Regular
+
+live_config_reload: true
