@@ -6,6 +6,7 @@ SETUVAR --export XDG_CURRENT_DESKTOP:sway
 SETUVAR --export XDG_SESSION_DESKTOP:sway
 SETUVAR --export _JAVA_AWT_WM_NONREPARENTING:1
 SETUVAR __fish_initialized:3400
+SETUVAR _fish_abbr_grimbox:grim\x20\x2dg\x20\x22\x24\x28slurp\x29\x22
 SETUVAR _fish_abbr_nf:neofetch
 SETUVAR _fish_abbr_ri:rua\x20install
 SETUVAR _fish_abbr_sps:sudo\x20pacman\x20\x2dS
@@ -37,4 +38,4 @@ SETUVAR fish_pager_color_description:B3A06D\x1eyellow\x1e\x2di
 SETUVAR fish_pager_color_prefix:cyan\x1e\x2d\x2dbold\x1e\x2d\x2dunderline
 SETUVAR fish_pager_color_progress:brwhite\x1e\x2d\x2dbackground\x3dcyan
 SETUVAR fish_pager_color_selected_background:\x2dr
-SETUVAR fish_user_paths:/home/jsimonrichard/\x2ecargo/bin
+SETUVAR fish_user_paths:/home/jsimonrichard/\x2elocal/bin\x1e/home/jsimonrichard/\x2ecargo/bin
