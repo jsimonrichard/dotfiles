@@ -1,0 +1,9 @@
+[Unit]
+Description=Controls display tempurature based on sunset/sunrise
+
+[Service]
+ExecStart=wlsunset -l 41.72 -L -81.24 -g 0.8
+Restart=on-failure
+
+[Install]
+WantedBy=graphical.target
