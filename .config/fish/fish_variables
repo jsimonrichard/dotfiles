@@ -1,6 +1,6 @@
 # This file contains fish universal variable definitions.
 # VERSION: 3.0
-SETUVAR --export QT_QPA_PLATFORM:wayland
+SETUVAR --export QT_QPA_PLATFORM:wayland\x3bxcb
 SETUVAR --export SDL_VIDEODRIVER:wayland
 SETUVAR --export XDG_CURRENT_DESKTOP:sway
 SETUVAR --export XDG_SESSION_DESKTOP:sway
