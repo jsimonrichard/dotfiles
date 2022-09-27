@@ -6,4 +6,4 @@ ExecStart=wlsunset -l 41.72 -L -81.24
 Restart=on-failure
 
 [Install]
-WantedBy=graphical.target
+WantedBy=graphical-session.target
