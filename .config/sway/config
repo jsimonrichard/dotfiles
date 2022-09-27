@@ -26,6 +26,7 @@ default_border pixel 1
 gaps outer 4
 gaps inner 4
 exec_always fcitx5 -d --replace
+exec_always autotiling
 
 bar {
     swaybar_command waybar
