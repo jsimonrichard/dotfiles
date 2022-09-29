@@ -27,6 +27,7 @@ gaps outer 4
 gaps inner 4
 exec_always fcitx5 -d --replace
 exec_always autotiling
+exec_always wlsunset -l 41.72 -L -81.24
 
 bar {
     swaybar_command waybar
