@@ -7,6 +7,7 @@ SETUVAR --export XDG_SESSION_DESKTOP:sway
 SETUVAR --export _JAVA_AWT_WM_NONREPARENTING:1
 SETUVAR __fish_initialized:3400
 SETUVAR _fish_abbr_grimbox:grim\x20\x2dg\x20\x22\x24\x28slurp\x29\x22
+SETUVAR _fish_abbr_h:helix
 SETUVAR _fish_abbr_nf:neofetch
 SETUVAR _fish_abbr_ri:rua\x20install
 SETUVAR _fish_abbr_sps:sudo\x20pacman\x20\x2dS
