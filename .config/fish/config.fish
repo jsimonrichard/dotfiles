@@ -8,5 +8,6 @@ abbr sps 'sudo pacman -S'
 abbr ri 'rua install'
 abbr nf 'neofetch'
 abbr h 'helix'
+abbr nv 'neovide --multigrid'
 
-set -gx EDITOR /usr/bin/helix
+set -gx EDITOR /usr/bin/neovide --multigrid

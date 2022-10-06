@@ -9,6 +9,7 @@ SETUVAR __fish_initialized:3400
 SETUVAR _fish_abbr_grimbox:grim\x20\x2dg\x20\x22\x24\x28slurp\x29\x22
 SETUVAR _fish_abbr_h:helix
 SETUVAR _fish_abbr_nf:neofetch
+SETUVAR _fish_abbr_nv:neovide\x20\x2d\x2dmultigrid
 SETUVAR _fish_abbr_ri:rua\x20install
 SETUVAR _fish_abbr_sps:sudo\x20pacman\x20\x2dS
 SETUVAR fish_color_autosuggestion:555\x1ebrblack
