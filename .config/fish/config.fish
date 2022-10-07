@@ -7,7 +7,6 @@ alias dotfiles="/usr/bin/git --git-dir=$HOME/.dotfiles/ --work-tree=$HOME"
 abbr sps 'sudo pacman -S'
 abbr ri 'rua install'
 abbr nf 'neofetch'
-abbr h 'helix'
 abbr nv 'neovide --multigrid'
 
 set -gx EDITOR /usr/bin/neovide --multigrid
