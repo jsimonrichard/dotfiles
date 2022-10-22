@@ -4,7 +4,7 @@ exec --no-startup-id systemctl --user import-environment DISPLAY WAYLAND_DISPLAY
 exec --no-startup-id dbus-update-activation-environment --systemd DISPLAY WAYLAND_DISPLAY SWAYSOCK XDG_CURRENT_DESKTOP
 
 output eDP-1 {
-    background ./john-towner-JgOeRuGD_Y4-unsplash.jpg fill
+    background ./derrick-cooper-L505cPnmIds-unsplash.jpg fill
 }
 
 exec swayidle -w \
@@ -22,7 +22,7 @@ input "1739:52710:DLL0945:00_06CB:CDE6_Touchpad" {
 # Personal settings
 focus_follows_mouse no
 client.focused #2980B9 #2980B9 #2980B9 #2980B9 #2980B9
-default_border pixel 1
+default_border pixel 2
 gaps outer 4
 gaps inner 4
 exec_always fcitx5 -d --replace
