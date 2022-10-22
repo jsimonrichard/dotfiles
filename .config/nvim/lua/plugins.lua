@@ -5,6 +5,7 @@ return require('packer').startup(function(use)
   use 'nvim-lua/popup.nvim'
   use 'stevearc/dressing.nvim'
 
+  use 'vim-airline/vim-airline'
   use 'morhetz/gruvbox'
 
   use 'jremmen/vim-ripgrep'
@@ -16,7 +17,6 @@ return require('packer').startup(function(use)
   use 'zooxyt/Ultisnips-rust'
   
   use 'lervag/vimtex'
-  use 'matze/vim-tex-fold'
   
   use {
     'nvim-treesitter/nvim-treesitter',
@@ -47,6 +47,19 @@ return require('packer').startup(function(use)
   }
   
   use 'nvim-telescope/telescope.nvim'
-
+  use {
+    'kevinhwang91/rnvimr',
+    cmd = {
+      "RnvimrToggle",
+      "RnvimrSync"
+    }
+  }
+  use 'preservim/nerdtree'
   use 'williamboman/mason.nvim'
+  use 'neovim/nvim-lspconfig'
+  use 'williamboman/mason-lspconfig.nvim'
+  use 'jose-elias-alvarez/null-ls.nvim'
+
+  use 'rust-lang/rust.vim'
+  --use 'neoclide/coc.nvim'
 end)

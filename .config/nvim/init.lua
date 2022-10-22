@@ -13,6 +13,23 @@ vim.cmd([[
   augroup end
 ]])
 
+require("null-ls").setup({
+  sources = {
+    require("null-ls").builtins.formatting.stylua,
+    require("null-ls").builtins.completion.spell,
+  },
+})
+
+require("telescope").setup{defaults = {
+  file_ignore_patterns = {"node_modules", ".git"}
+}}
+
+-- If another buffer tries to replace NERDTree, put it in the other window, and bring back NERDTree.
+vim.cmd([[
+  autocmd BufEnter * if bufname('#') =~ 'NERD_tree_\d\+' && bufname('%') !~ 'NERD_tree_\d\+' && winnr('$') > 1 |
+      \ let buf=bufnr() | buffer# | execute "normal! \<C-W>w" | execute 'buffer'.buf | endif
+]])
+
 -- Options
 vim.opt.mouse = "a"
 vim.opt.spell = true
@@ -46,6 +63,20 @@ vim.keymap.set('n', 'fb', builtin.buffers, {})
 vim.keymap.set('n', 'fh', builtin.help_tags, {})
 vim.keymap.set('n', 'ft', builtin.treesitter, {})
 
-vim.api.nvim_set_keymap("n", "<C-h>", "<Cmd>BufferPrevious<CR>", {noremap = true})
-vim.api.nvim_set_keymap("n", "<C-l>", "<Cmd>BufferNext<CR>", {noremap = true})
+vim.g.rnvimr_ex_enable = 1
+vim.api.nvim_set_keymap("n", "<Leader>r", ":RnvimrToggle<CR>", {noremap = true})
+
+vim.api.nvim_set_keymap("n", "<Leader>tt", ":NERDTreeToggle<CR>", {noremap = true})
+vim.api.nvim_set_keymap("n", "<Leader>tf", ":NERDTreeFind<CR>", {noremap = true})
+
+vim.api.nvim_set_keymap("!", "<C-j>", "<Cmd>BufferPrevious<CR>", {noremap = true})
+vim.api.nvim_set_keymap("n", "<C-j>", "<Cmd>BufferPrevious<CR>", {noremap = true})
+vim.api.nvim_set_keymap("!", "<C-k>", "<Cmd>BufferNext<CR>", {noremap = true})
+vim.api.nvim_set_keymap("n", "<C-k>", "<Cmd>BufferNext<CR>", {noremap = true})
+vim.api.nvim_set_keymap("!", "<C-q>", "<Cmd>BufferClose<CR>", {noremap = true})
 vim.api.nvim_set_keymap("n", "<C-q>", "<Cmd>BufferClose<CR>", {noremap = true})
+
+vim.api.nvim_set_keymap("!", "<C-h>", "<Cmd>wincmd p<CR>", {noremap = true})
+vim.api.nvim_set_keymap("n", "<C-h>", "<Cmd>wincmd p<CR>", {noremap = true})
+vim.api.nvim_set_keymap("!", "<C-l>", "<Cmd>wincmd p<CR>", {noremap = true})
+vim.api.nvim_set_keymap("n", "<C-l>", "<Cmd>wincmd p<CR>", {noremap = true})
