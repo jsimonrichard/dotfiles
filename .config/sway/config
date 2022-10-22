@@ -23,8 +23,8 @@ input "1739:52710:DLL0945:00_06CB:CDE6_Touchpad" {
 focus_follows_mouse no
 client.focused #2980B9 #2980B9 #2980B9 #2980B9 #2980B9
 default_border pixel 2
-gaps outer 4
-gaps inner 4
+gaps outer 0
+gaps inner 8
 exec_always fcitx5 -d --replace
 exec_always autotiling
 exec_always wlsunset -l 41.72 -L -81.24
