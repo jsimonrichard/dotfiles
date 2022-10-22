@@ -1,4 +1,5 @@
 // -*- mode: json -*-
+// Derived from https://github.com/cjbassi/config/blob/master/.config/waybar/config
 
 {
 	"layer": "top",
