@@ -9,4 +9,9 @@ abbr ri 'rua install'
 abbr nf 'neofetch'
 abbr nv 'neovide --multigrid'
 
+abbr gs 'git status'
+abbr gc 'git commit -m'
+abbr gp 'git push'
+abbr gd 'git diff'
+
 set -gx EDITOR /usr/bin/neovide --multigrid

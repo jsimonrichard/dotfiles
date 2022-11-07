@@ -35,6 +35,14 @@ window#waybar {
 	background: #1a1a1a;
 }
 
+button {
+	box-shadow: inherit;
+	text-shadow: inherit;
+	padding: inherit;
+	border: inherit;
+	border-radius: inherit;
+}
+
 #workspaces button {
 	padding: 0 2px;
 	color: #fdf6e3;
@@ -43,13 +51,11 @@ window#waybar {
 	color: #268bd2;
 }
 #workspaces button:hover {
-	box-shadow: inherit;
-	text-shadow: inherit;
-}
-#workspaces button:hover {
 	background: #1a1a1a;
 	border: #1a1a1a;
-	padding: 0 3px;
+}
+#workspaces button.urgent {
+	color: #eb4d4b;
 }
 
 #idle_inhibitor {
