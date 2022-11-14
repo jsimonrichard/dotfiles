@@ -1,9 +1,6 @@
 -- Packer
 require "plugins"
-
-local status_ok, mason = pcall(require, "mason")
-if not status_ok then return end
-mason.setup()
+require "keybindings"
 
 -- Update when plugins.lua changes
 vim.cmd([[
@@ -13,16 +10,6 @@ vim.cmd([[
   augroup end
 ]])
 
-require("null-ls").setup({
-  sources = {
-    require("null-ls").builtins.formatting.stylua,
-    require("null-ls").builtins.completion.spell,
-  },
-})
-
-require("telescope").setup{defaults = {
-  file_ignore_patterns = {"node_modules", ".git"}
-}}
 
 -- If another buffer tries to replace NERDTree, put it in the other window, and bring back NERDTree.
 vim.cmd([[
@@ -38,45 +25,58 @@ vim.opt.shiftwidth = 2
 vim.opt.autoindent = true
 vim.opt.smartindent = true
 vim.opt.cc = '80'
+vim.opt.clipboard = 'unnamedplus'
 
-vim.api.nvim_set_keymap("!", "<C-v>", "<Esc>\"+p", {noremap = true})
-vim.api.nvim_set_keymap("!", "<C-c>", "<Esc>\"+y", {noremap = true})
-vim.api.nvim_set_keymap("!", "<C-x>", "<Esc>\"+m", {noremap = true})
-
-vim.g.gruvbox_italic = 1
-vim.g.gruvbox_bold = 1
 vim.cmd [[
 autocmd vimenter * ++nested colorscheme gruvbox
 ]]
 
-vim.g.UltiSnipsJumpForwardTrigger = '<tab>'
+vim.g.airline_theme = "base16_gruvbox_dark_medium"
 
 vim.g.vimtex_view_method = 'zathura'
 vim.opt.conceallevel = 1
 vim.g.tex_conceal = 'abdmg'
 vim.g.vimtex_quickfix_mode=0
 
-local builtin = require('telescope.builtin')
-vim.keymap.set('n', 'ff', function() builtin.find_files({hidden = true}) end, {})
-vim.keymap.set('n', 'fg', builtin.live_grep, {})
-vim.keymap.set('n', 'fb', builtin.buffers, {})
-vim.keymap.set('n', 'fh', builtin.help_tags, {})
-vim.keymap.set('n', 'ft', builtin.treesitter, {})
+local cmp = require("cmp")
+cmp.setup({
+  preselect = cmp.PreselectMode.None,
+  snippet = {
+    expand = function(args)
+      vim.fn["vsnip#anonymous"](args.body)
+    end,
+  },
+  mapping = {
+    ["<C-p>"] = cmp.mapping.select_prev_item(),
+    ["<C-n>"] = cmp.mapping.select_next_item(),
+    -- Add tab support
+    ["<S-Tab>"] = cmp.mapping.select_prev_item(),
+    ["<Tab>"] = cmp.mapping.select_next_item(),
+    ["<C-d>"] = cmp.mapping.scroll_docs(-4),
+    ["<C-f>"] = cmp.mapping.scroll_docs(4),
+    ["<C-Space>"] = cmp.mapping.complete(),
+    ["<C-e>"] = cmp.mapping.close(),
+    ["<CR>"] = cmp.mapping.confirm({
+      behavior = cmp.ConfirmBehavior.Insert,
+      select = true,
+    }),
+  },
 
-vim.g.rnvimr_ex_enable = 1
-vim.api.nvim_set_keymap("n", "<Leader>r", ":RnvimrToggle<CR>", {noremap = true})
+  -- Installed sources
+  sources = {
+    { name = "nvim_lsp" },
+    { name = "vsnip" },
+    { name = "path" },
+    { name = "buffer" },
+  },
+})
 
-vim.api.nvim_set_keymap("n", "<Leader>tt", ":NERDTreeToggle<CR>", {noremap = true})
-vim.api.nvim_set_keymap("n", "<Leader>tf", ":NERDTreeFind<CR>", {noremap = true})
 
-vim.api.nvim_set_keymap("!", "<C-j>", "<Cmd>BufferPrevious<CR>", {noremap = true})
-vim.api.nvim_set_keymap("n", "<C-j>", "<Cmd>BufferPrevious<CR>", {noremap = true})
-vim.api.nvim_set_keymap("!", "<C-k>", "<Cmd>BufferNext<CR>", {noremap = true})
-vim.api.nvim_set_keymap("n", "<C-k>", "<Cmd>BufferNext<CR>", {noremap = true})
-vim.api.nvim_set_keymap("!", "<C-q>", "<Cmd>BufferClose<CR>", {noremap = true})
-vim.api.nvim_set_keymap("n", "<C-q>", "<Cmd>BufferClose<CR>", {noremap = true})
-
-vim.api.nvim_set_keymap("!", "<C-h>", "<Cmd>wincmd p<CR>", {noremap = true})
-vim.api.nvim_set_keymap("n", "<C-h>", "<Cmd>wincmd p<CR>", {noremap = true})
-vim.api.nvim_set_keymap("!", "<C-l>", "<Cmd>wincmd p<CR>", {noremap = true})
-vim.api.nvim_set_keymap("n", "<C-l>", "<Cmd>wincmd p<CR>", {noremap = true})
+-- Format on Write
+vim.api.nvim_create_autocmd("BufWritePre", {
+  pattern = "*.rs",
+  callback = function()
+   vim.lsp.buf.formatting_sync(nil, 200)
+  end,
+  group = format_sync_grp,
+})
