@@ -16,7 +16,6 @@ vim.cmd([[
   autocmd BufEnter * if bufname('#') =~ 'NERD_tree_\d\+' && bufname('%') !~ 'NERD_tree_\d\+' && winnr('$') > 1 |
       \ let buf=bufnr() | buffer# | execute "normal! \<C-W>w" | execute 'buffer'.buf | endif
 ]])
-
 -- Options
 vim.opt.mouse = "a"
 vim.opt.spell = true
@@ -26,6 +25,7 @@ vim.opt.autoindent = true
 vim.opt.smartindent = true
 vim.opt.cc = '80'
 vim.opt.clipboard = 'unnamedplus'
+vim.opt.linebreak = true
 
 vim.cmd [[
 autocmd vimenter * ++nested colorscheme gruvbox
@@ -56,10 +56,10 @@ cmp.setup({
     ["<C-f>"] = cmp.mapping.scroll_docs(4),
     ["<C-Space>"] = cmp.mapping.complete(),
     ["<C-e>"] = cmp.mapping.close(),
-    ["<CR>"] = cmp.mapping.confirm({
-      behavior = cmp.ConfirmBehavior.Insert,
-      select = true,
-    }),
+    --["<C-CR>"] = cmp.mapping.confirm({
+      --behavior = cmp.ConfirmBehavior.Insert,
+      --select = true,
+    --}),
   },
 
   -- Installed sources

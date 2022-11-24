@@ -55,15 +55,29 @@ return require('packer').startup(function(use)
     'nvim-telescope/telescope.nvim',
     requires = { {'nvim-lua/plenary.nvim'} },
     config = function()
-      require("telescope").setup{defaults = {
-	file_ignore_patterns = {
-	  "node_modules",
-	  ".git"
+      require("telescope").setup({
+	defaults = {
+	  file_ignore_patterns = {
+	    "node_modules",
+	    ".git"
+	  }
+	},
+	extensions = {
+	  fzf = {
+	    fuzzy = true,
+	    override_generic_sorter = true,
+	    override_file_sorter = true,
+	    case_mode = "smart_case",
+	  }
 	}
-      }}
+      })
+      require('telescope').load_extension('fzf')
     end
   }
-  use 'nvim-telescope/telescope-fzf-native.nvim'
+  use {
+    'nvim-telescope/telescope-fzf-native.nvim',
+    run = 'make'
+  }
 
   use {
     'kevinhwang91/rnvimr',
