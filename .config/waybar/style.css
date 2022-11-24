@@ -82,3 +82,16 @@ button {
 #tray {
 	padding: 0 10px;
 }
+
+#tray > . {
+  padding: 0 10px;
+}
+
+#tray > .passive {
+  -gtk-icon-effect: dim;
+}
+
+#tray > .needs-attention {
+  -gtk-icon-effect: highlight;
+  background-color: #eb4d4b;
+}
