@@ -7,6 +7,7 @@ abbr sps 'sudo pacman -S'
 abbr ri 'rua install'
 abbr nf 'neofetch'
 abbr nv 'neovide --multigrid'
+abbr nmac 'nmcli --ask d wifi connect'
 
 abbr gs 'git status'
 abbr gc 'git commit -m'
