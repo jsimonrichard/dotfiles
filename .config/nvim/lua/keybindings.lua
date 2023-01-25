@@ -15,6 +15,8 @@ vim.api.nvim_set_keymap("n", "<Leader>r", ":RnvimrToggle<CR>", {noremap = true})
 vim.api.nvim_set_keymap("n", "<Leader>tt", ":NERDTreeToggle<CR>", {noremap = true})
 vim.api.nvim_set_keymap("n", "<Leader>tf", ":NERDTreeFind<CR>", {noremap = true})
 
+vim.api.nvim_set_keymap("n", "<Leader><Space>", ":CodeActionMenu<CR>", {noremap = true})
+
 vim.api.nvim_set_keymap("!", "<C-j>", "<Cmd>BufferPrevious<CR>", {noremap = true})
 vim.api.nvim_set_keymap("n", "<C-j>", "<Cmd>BufferPrevious<CR>", {noremap = true})
 vim.api.nvim_set_keymap("!", "<C-k>", "<Cmd>BufferNext<CR>", {noremap = true})

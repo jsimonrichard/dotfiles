@@ -14,21 +14,21 @@ return require('packer').startup(function(use)
 
   use 'lervag/vimtex'
 
-  --use {
-    --'nvim-treesitter/nvim-treesitter',
-    --run = ":TSUpdate",
-    --event = { "BufRead", "BufNewFile" },
-    --cmd = {
-      --"TSInstall",
-      --"TSInstallInfo",
-      --"TSInstallSync",
-      --"TSUninstall",
-      --"TSUpdate",
-      --"TSUpdateSync",
-      --"TSDisableAll",
-      --"TSEnableAll",
-    --},
-  --}
+  use {
+    'nvim-treesitter/nvim-treesitter',
+    run = ":TSUpdate",
+    event = { "BufRead", "BufNewFile" },
+    cmd = {
+      "TSInstall",
+      "TSInstallInfo",
+      "TSInstallSync",
+      "TSUninstall",
+      "TSUpdate",
+      "TSUpdateSync",
+      "TSDisableAll",
+      "TSEnableAll",
+    },
+  }
 
   use 'kyazdani42/nvim-web-devicons'
 
@@ -168,5 +168,10 @@ return require('packer').startup(function(use)
   -- See hrsh7th other plugins for more great completion sources!
   -- Snippet engine
   use 'hrsh7th/vim-vsnip'
+
+  use {
+    'weilbith/nvim-code-action-menu',
+    cmd = 'CodeActionMenu',
+  }
 
 end)
