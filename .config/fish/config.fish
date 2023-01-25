@@ -8,6 +8,7 @@ abbr ri 'rua install'
 abbr nf 'neofetch'
 abbr nv 'neovide --multigrid'
 abbr nmac 'nmcli --ask d wifi connect'
+abbr rsm 'rusty-man'
 
 abbr gs 'git status'
 abbr gc 'git commit -m'

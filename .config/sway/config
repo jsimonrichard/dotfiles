@@ -21,6 +21,7 @@ input "1739:52710:DLL0945:00_06CB:CDE6_Touchpad" {
 
 # Personal settings
 focus_follows_mouse no
+focus_on_window_activation focus
 client.focused #2980B9 #2980B9 #2980B9 #2980B9 #2980B9
 default_border pixel 2
 gaps outer 0
