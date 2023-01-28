@@ -22,10 +22,15 @@ input "1739:52710:DLL0945:00_06CB:CDE6_Touchpad" {
 # Personal settings
 focus_follows_mouse no
 focus_on_window_activation focus
-client.focused #2980B9 #2980B9 #2980B9 #2980B9 #2980B9
+
 default_border pixel 2
+client.focused #292b2e #292b2e #292b2e #292b2e
+client.unfocused #1a1b26 #1a1b26 #1a1b26 #1a1b26 
+client.focused_inactive #1a1b26 #1a1b26 #1a1b26 #1a1b26 
+
 gaps outer 0
-gaps inner 8
+# gaps inner 8
+gaps inner 0
 exec_always fcitx5 -d --replace
 exec_always autotiling
 exec_always wlsunset -l 41.72 -L -81.24
