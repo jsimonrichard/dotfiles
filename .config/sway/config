@@ -4,7 +4,7 @@ exec --no-startup-id systemctl --user import-environment DISPLAY WAYLAND_DISPLAY
 exec --no-startup-id dbus-update-activation-environment --systemd DISPLAY WAYLAND_DISPLAY SWAYSOCK XDG_CURRENT_DESKTOP
 
 output eDP-1 {
-    background ./derrick-cooper-L505cPnmIds-unsplash.jpg fill
+    background ./stephen-leonardi-grHuhOaIP0U-unsplash.jpg fill
 }
 
 exec swayidle -w \
@@ -24,7 +24,7 @@ focus_follows_mouse no
 focus_on_window_activation focus
 
 default_border pixel 2
-client.focused #292b2e #292b2e #292b2e #292b2e
+client.focused #32344a #32344a #32344a #32344a
 client.unfocused #1a1b26 #1a1b26 #1a1b26 #1a1b26 
 client.focused_inactive #1a1b26 #1a1b26 #1a1b26 #1a1b26 
 

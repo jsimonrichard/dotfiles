@@ -6,18 +6,18 @@
 }
 
 window#waybar {
-	background: #292b2e;
+	background: #32344a;
 	color: #fdf6e3;
 }
 
 #custom-right-arrow-dark,
 #custom-left-arrow-dark {
-	color: #1a1a1a;
+	color: #1a1b26;
 }
 #custom-right-arrow-light,
 #custom-left-arrow-light {
-	color: #292b2e;
-	background: #1a1a1a;
+	color: #32344a;
+	background: #1a1b26;
 }
 
 #workspaces,
@@ -32,7 +32,7 @@ window#waybar {
 #battery,
 #disk,
 #tray {
-	background: #1a1a1a;
+	background: #1a1b26;
 }
 
 button {
@@ -51,24 +51,24 @@ button {
 	color: #268bd2;
 }
 #workspaces button:hover {
-	background: #1a1a1a;
-	border: #1a1a1a;
+	background: #1a1b26;
+	border: #1a1b26;
 }
 #workspaces button.urgent {
 	color: #eb4d4b;
 }
 
 #idle_inhibitor {
-	color: #268bd2;
+	color: #449dab;
 }
 #pulseaudio {
-	color: #6c71c4;
+	color: #ad8ee6;
 }
 #network {
-	color: #859900;
+	color: #9ece6a;
 }
 #battery {
-	color: #b58900;
+	color: #e0af68;
 }
 
 #clock,
