@@ -1,7 +1,7 @@
 ignore-empty-password
 font=Fira Code
 
-image=~/.config/sway/stephen-leonardi-grHuhOaIP0U-unsplash.jpg
+image=~/.config/swaylock/stephen-leonardi-grHuhOaIP0U-unsplash-blurred.jpg
 
 indicator-radius=100
 indicator-thickness=20
