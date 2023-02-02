@@ -73,10 +73,10 @@
 	},
 
 	"idle_inhibitor": {
-		"format": "<span font='30' line_height='20480'>{icon}</span>",
+		"format": "<span font='30' line_height='20480' rise='-3000'>{icon}</span>",
 		"format-icons": {
-			"activated": "",
-			"deactivated": ""
+			"activated": "󰈈",
+			"deactivated": "󰈉"
 		}
 	},
 
