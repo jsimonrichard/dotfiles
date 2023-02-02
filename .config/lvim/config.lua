@@ -34,6 +34,11 @@ lvim.keys.normal_mode["<S-h>"] = ":BufferLineCyclePrev<CR>"
 lvim.keys.normal_mode["|"] = ":vsplit<CR>"
 lvim.keys.normal_mode["-"] = ":split<CR>"
 
+lvim.builtin.which_key.mappings["m"] = {
+  name = "Markdown",
+  p = { "<cmd>MarkdownPreview<CR>", "Preview" },
+  s = {"<cmd>MarkdownPreviewStop<CR>", "Stop Preview"}
+}
 -- unmap a default keymapping
 -- vim.keymap.del("n", "<C-Up>")
 -- override a default keymapping
@@ -182,12 +187,21 @@ lvim.plugins = {
     "folke/todo-comments.nvim",
     requires = "nvim-lua/plenary.nvim",
   },
-  {"vimwiki/vimwiki"},
+  "vimwiki/vimwiki",
   {
     "Pocco81/auto-save.nvim",
     config = function()
       require("auto-save").setup()
     end,
+  },
+  {
+    "iamcco/markdown-preview.nvim",
+    run = function() vim.fn["mkdp#util#install"]() end,
+    ft = "markdown",
+    config = function()
+      vim.g.mkdp_auto_start = 1
+    end,
+    cmd = { "MarkdownPreview", "MarkdownPreviewStop" }
   },
 }
 
@@ -195,7 +209,7 @@ lvim.plugins = {
 
 -- Auto format
 vim.api.nvim_create_autocmd("BufWritePre", {
-  pattern = {"*.rs", "*.c", "*.js", "*.jsx", "*.ts", "*.tsx"},
+  pattern = { "*.rs", "*.c", "*.js", "*.jsx", "*.ts", "*.tsx" },
   command = "lua vim.lsp.buf.format()",
 })
 
