@@ -8,9 +8,13 @@ output eDP-1 {
 }
 
 exec swayidle -w \
-    timeout 300 'chayang && swaylock -f -c 000000' \
-    timeout 600 'swaymsg "output * dpms off"' resume 'swaymsg "output * dpms on"' \
-    before-sleep 'swaylock -f -c 000000'
+    timeout 10 'chayang && swaylock -f -c 000000' \
+    timeout 15 'swaymsg "output * dpms off"' \
+      resume 'swaymsg "output * dpms on"' \
+    before-sleep 'swaylock -f -c 000000' \
+    after-resume 'pkill -USR2 waybar' \
+    unlock 'pkill -USR2 waybar' \
+    
 
 input "1739:52710:DLL0945:00_06CB:CDE6_Touchpad" {
     dwt enabled
@@ -20,7 +24,7 @@ input "1739:52710:DLL0945:00_06CB:CDE6_Touchpad" {
 }
 
 # Personal settings
-focus_follows_mouse no
+focus_follows_mouse yes
 focus_on_window_activation focus
 
 default_border pixel 0
@@ -32,7 +36,7 @@ gaps outer 0
 gaps inner 8
 exec_always fcitx5 -d --replace
 exec_always autotiling
-exec_always wlsunset -l 41.72 -L -81.24
+# exec_always wlsunset -l 41.72 -L -81.24
 
 bar {
     swaybar_command waybar
