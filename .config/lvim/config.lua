@@ -14,6 +14,22 @@ lvim.format_on_save.enabled = false
 lvim.colorscheme = "lunar"
 vim.opt.smartindent = true
 lvim.transparent_window = true
+vim.g.vimtex_view_method = 'zathura'
+vim.opt.conceallevel = 1
+vim.g.tex_conceal = 'abdmg'
+vim.g.vimtex_quickfix_mode=0
+vim.opt.wrap = true
+vim.opt.linebreak = true
+vim.g.vimwiki_list = {{
+  template_path = "~/vimwiki/templates",
+  template_default = "default",
+  template_ext = ".html"
+}}
+-- vim.g.vimwiki_list = {{
+--   path = '~/Docs/Mywiki',
+--   syntax = 'markdown',
+--   ext = '.md'
+-- }}
 -- to disable icons and use a minimalist setup, uncomment the following
 -- lvim.use_icons = false
 
@@ -186,6 +202,9 @@ lvim.plugins = {
   {
     "folke/todo-comments.nvim",
     requires = "nvim-lua/plenary.nvim",
+    config = function()
+      require("todo-comments").setup()
+    end,
   },
   "vimwiki/vimwiki",
   {
@@ -203,13 +222,25 @@ lvim.plugins = {
     end,
     cmd = { "MarkdownPreview", "MarkdownPreviewStop" }
   },
+  'lervag/vimtex',
+  {
+    "iurimateus/luasnip-latex-snippets.nvim",
+    -- replace "lervag/vimtex" with "nvim-treesitter/nvim-treesitter" if you're
+    -- using treesitter.
+    requires = { "L3MON4D3/LuaSnip", "lervag/vimtex" },
+    config = function()
+      require'luasnip-latex-snippets'.setup()
+      -- or setup({ use_treesitter = true })
+    end,
+    ft = "tex",
+  }
 }
 
 -- Autocommands (https://neovim.io/doc/user/autocmd.html)
 
 -- Auto format
 vim.api.nvim_create_autocmd("BufWritePre", {
-  pattern = { "*.rs", "*.c", "*.js", "*.jsx", "*.ts", "*.tsx" },
+  pattern = { "*.rs", "*.c", "*.js", "*.jsx", "*.ts", "*.tsx", "*.tex" },
   command = "lua vim.lsp.buf.format()",
 })
 
