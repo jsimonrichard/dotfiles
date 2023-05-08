@@ -8,8 +8,8 @@ output eDP-1 {
 }
 
 exec swayidle -w \
-    timeout 10 'chayang && swaylock -f -c 000000' \
-    timeout 15 'swaymsg "output * dpms off"' \
+    timeout 300 'chayang && swaylock -f -c 000000' \
+    timeout 600 'swaymsg "output * dpms off"' \
       resume 'swaymsg "output * dpms on"' \
     before-sleep 'swaylock -f -c 000000' \
     after-resume 'pkill -USR2 waybar' \

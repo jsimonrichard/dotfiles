@@ -16,8 +16,10 @@ vim.opt.smartindent = true
 lvim.transparent_window = true
 vim.g.vimtex_view_method = 'zathura'
 vim.opt.conceallevel = 1
-vim.g.tex_conceal = 'abdmg'
+-- vim.g.tex_conceal = 'abdmg'
+vim.g.tex_conceal = ''
 vim.g.vimtex_quickfix_mode=0
+vim.g.vimtex_compiler_engine = 'lualatex'
 vim.opt.wrap = true
 vim.opt.linebreak = true
 vim.g.vimwiki_list = {{
@@ -207,12 +209,12 @@ lvim.plugins = {
     end,
   },
   "vimwiki/vimwiki",
-  {
-    "Pocco81/auto-save.nvim",
-    config = function()
-      require("auto-save").setup()
-    end,
-  },
+  -- {
+  --   "Pocco81/auto-save.nvim",
+  --   config = function()
+  --     require("auto-save").setup()
+  --   end,
+  -- },
   {
     "iamcco/markdown-preview.nvim",
     run = function() vim.fn["mkdp#util#install"]() end,
@@ -233,7 +235,9 @@ lvim.plugins = {
       -- or setup({ use_treesitter = true })
     end,
     ft = "tex",
-  }
+  },
+  'simrat39/rust-tools.nvim',
+  'petRUShka/vim-sage'
 }
 
 -- Autocommands (https://neovim.io/doc/user/autocmd.html)
