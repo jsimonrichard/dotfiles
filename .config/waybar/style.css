@@ -1,8 +1,8 @@
 /* Derived from https://github.com/cjbassi/config/blob/master/.config/waybar/style.css` */
 
 * {
-	font-size: 20px;
-	font-family: FuraMonoNerdFontCompleteM Nerd Font;
+	font-size: 18px;
+	font-family: "FiraCode Nerd Font", "Font Awesome 6 Free";
 }
 
 window#waybar {
@@ -47,6 +47,7 @@ button {
 	padding: 0 2px;
 	color: #fdf6e3;
 }
+
 #workspaces button.focused {
 	color: #268bd2;
 }
@@ -80,7 +81,7 @@ button {
 #battery,
 #disk,
 #tray {
-	padding: 0 10px;
+	padding: 0 15px;
 }
 
 #tray > . {

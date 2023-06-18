@@ -237,7 +237,8 @@ lvim.plugins = {
     ft = "tex",
   },
   'simrat39/rust-tools.nvim',
-  'petRUShka/vim-sage'
+  'petRUShka/vim-sage',
+  'christoomey/vim-tmux-navigator'
 }
 
 -- Autocommands (https://neovim.io/doc/user/autocmd.html)

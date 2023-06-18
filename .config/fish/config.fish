@@ -16,4 +16,4 @@ abbr gc 'git commit -m'
 abbr gp 'git push'
 abbr gd 'git diff'
 
-set -gx EDITOR /usr/bin/neovide --multigrid
+set -gx EDITOR /usr/bin/nvim
