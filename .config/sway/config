@@ -55,7 +55,7 @@ set $lock swaylock && pkill -USR2 waybar
 include /etc/sway/config.d/*
 include ./config.d/*
 
-exec sworkstyle &> /tmp/sworkstyle.log
+exec sworkstyle -d &> /tmp/sworkstyle.log
 
 workspace 11
 exec kitty
@@ -64,5 +64,4 @@ exec blueman-applet
 workspace 12
 exec firefox
 
-exec_always "swaysome rearrange-workspaces"
-exec_always "swaysome init 1"
+exec_always "sleep 2; swaysome rearrange-workspaces; swaysome init 1"

@@ -56,7 +56,7 @@
 
 	"sway/workspaces": {
 		"disable-scroll": true,
-		"format": "{name}"
+		"format": "({value})"
 	},
 
 	"clock#1": {
