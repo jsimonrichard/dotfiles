@@ -1,0 +1,17 @@
+font-features = "liga 0"
+font = /usr/share/fonts/TTF/FiraCodeNerdFont-Regular.ttf
+hint-font = false
+ascii-input = true
+font-size = 20
+width = 100%
+height = 100%
+border-width = 0
+outline-width = 0
+padding-left=40%
+padding-top=30%
+result-spacing = 25
+num-results = 7
+background-color = #24283baa
+text-color = #a9b1d6
+selection-color = #f7768e
+hide-cursor = true
