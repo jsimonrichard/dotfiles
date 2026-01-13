@@ -1,0 +1,199 @@
+#!/usr/bin/env bash
+
+# Script to search and switch between open Hyprland windows using walker
+
+check_dependencies() {
+    local missing_deps=()
+    
+    if ! command -v hyprctl &> /dev/null; then
+        missing_deps+=("hyprctl")
+    fi
+    
+    if ! command -v jq &> /dev/null; then
+        missing_deps+=("jq")
+    fi
+    
+    if ! command -v walker &> /dev/null; then
+        missing_deps+=("walker")
+    fi
+    
+    if [ ${#missing_deps[@]} -gt 0 ]; then
+        notify-send "Error" "Missing required dependencies: ${missing_deps[*]}" 2>/dev/null || true
+        return 1
+    fi
+    
+    return 0
+}
+
+get_windows_json() {
+    local windows_json
+    local exit_code
+    
+    windows_json=$(hyprctl clients -j 2>/dev/null)
+    exit_code=$?
+    
+    if [ $exit_code -ne 0 ] || [ -z "$windows_json" ] || [ "$windows_json" = "[]" ]; then
+        notify-send "No windows found" "There are no open windows to switch to." 2>/dev/null || true
+        return 1
+    fi
+    
+    echo "$windows_json"
+    return 0
+}
+
+format_window_list() {
+    local windows_json="$1"
+    local window_list
+    local exit_code
+    
+    # Extract window app names (class) and titles, format for walker
+    # Format: "App Name | Window Title" (no address shown)
+    # Filter out windows with empty titles and pad app name to 20 characters
+    window_list=$(echo "$windows_json" | jq -r '.[] | select(.title != "") | "\(.class)|\(.title)"' 2>/dev/null | awk -F'|' '{printf "%-20s | %s\n", $1, $2}')
+    exit_code=$?
+    
+    if [ $exit_code -ne 0 ] || [ -z "$window_list" ]; then
+        notify-send "No windows found" "No windows with titles found." 2>/dev/null || true
+        return 1
+    fi
+    
+    echo "$window_list"
+    return 0
+}
+
+select_window() {
+    local window_list="$1"
+    local selected
+    
+    # Use walker to select a window
+    # Walker needs --dmenu flag to read from stdin
+    selected=$(echo -e "$window_list" | walker --dmenu -p "Select window…" 2>/dev/null)
+    local walker_exit_code=$?
+    
+    # Check if user cancelled (walker returns empty on cancel or error)
+    # Exit code 1 typically means user cancelled/escaped
+    if [ -z "$selected" ] || [ $walker_exit_code -ne 0 ]; then
+        return 2  # Special return code for cancellation
+    fi
+    
+    echo "$selected"
+    return 0
+}
+
+parse_selection() {
+    local selected="$1"
+    local selected_app
+    local selected_title
+    
+    # Parse the selected line to get app name and title
+    # The format is "%-20s | %s", so we extract first 20 chars (trimmed) and everything after " | "
+    selected_app=$(echo "$selected" | cut -c1-20 | xargs)
+    # Extract everything after the " | " separator (starts at position 24: 20 chars + " | " = 23 chars, title starts at 24)
+    selected_title=$(echo "$selected" | cut -c24- | xargs)
+    
+    echo "$selected_app|$selected_title"
+}
+
+find_window_address() {
+    local windows_json="$1"
+    local selected_app="$2"
+    local selected_title="$3"
+    local window_address=""
+    
+    # Loop through windows to find the matching address
+    while IFS= read -r window; do
+        local app
+        local title
+        local address
+        
+        app=$(echo "$window" | jq -r '.class')
+        title=$(echo "$window" | jq -r '.title')
+        address=$(echo "$window" | jq -r '.address')
+        
+        # Trim both sides for comparison
+        app=$(echo "$app" | xargs)
+        title=$(echo "$title" | xargs)
+        
+        if [ "$app" = "$selected_app" ] && [ "$title" = "$selected_title" ]; then
+            window_address="$address"
+            break
+        fi
+    done < <(echo "$windows_json" | jq -c '.[] | select(.title != "")')
+    
+    echo "$window_address"
+}
+
+switch_to_window() {
+    local window_address="$1"
+    local selected_app="$2"
+    local selected_title="$3"
+    
+    if [ -n "$window_address" ]; then
+        hyprctl dispatch focuswindow "address:$window_address" 2>/dev/null
+        if [ $? -eq 0 ]; then
+            return 0
+        else
+            notify-send "Error" "Failed to switch to window" 2>/dev/null || true
+            return 1
+        fi
+    else
+        # Debug: show what we were looking for
+        notify-send "Error" "Failed to find matching window address\nLooking for: App='$selected_app' Title='$selected_title'" 2>/dev/null || true
+        return 1
+    fi
+}
+
+# Main execution
+main() {
+    local windows_json
+    local window_list
+    local selected
+    local selection_parts
+    local selected_app
+    local selected_title
+    local window_address
+    
+    # Check dependencies
+    if ! check_dependencies; then
+        exit 1
+    fi
+    
+    # Get windows
+    windows_json=$(get_windows_json)
+    if [ $? -ne 0 ]; then
+        exit 1
+    fi
+    
+    # Format window list
+    window_list=$(format_window_list "$windows_json")
+    if [ $? -ne 0 ]; then
+        exit 1
+    fi
+    
+    # Select window
+    selected=$(select_window "$window_list")
+    local select_exit_code=$?
+    if [ $select_exit_code -eq 2 ]; then
+        # User cancelled - exit gracefully
+        exit 0
+    elif [ $select_exit_code -ne 0 ]; then
+        exit 1
+    fi
+    
+    # Parse selection
+    selection_parts=$(parse_selection "$selected")
+    selected_app=$(echo "$selection_parts" | cut -d'|' -f1)
+    selected_title=$(echo "$selection_parts" | cut -d'|' -f2)
+    
+    # Find window address
+    window_address=$(find_window_address "$windows_json" "$selected_app" "$selected_title")
+    
+    # Switch to window
+    if ! switch_to_window "$window_address" "$selected_app" "$selected_title"; then
+        exit 1
+    fi
+    
+    exit 0
+}
+
+main "$@"
