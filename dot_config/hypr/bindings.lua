@@ -30,3 +30,15 @@ o.bind("SUPER + SHIFT + A", "T3 Chat", 'omarchy-launch-webapp "https://t3.chat"'
 -- o.bind("SUPER + SHIFT + S", nil, "omarchy-capture-screenshot")
 -- o.bind("SUPER + H", nil, "voxtype record toggle")
 -- o.bind("SUPER + PERIOD", nil, "omarchy-shell shell toggle omarchy.emojis")
+
+
+-- Packaged omarchy.lua still binds SUPER+Tab to `tsk task tui-launch`.
+-- Unbind that and toggle the overlay until /usr/share/tsk is refreshed.
+hl.unbind("SUPER + TAB")
+o.bind("SUPER + TAB", "Task manager", "omarchy-shell shell toggle tsk.taskspace")
+
+-- tsk-managed begin
+dofile("/usr/share/tsk/hypr/omarchy.lua")
+hl.unbind("SUPER + TAB")
+o.bind("SUPER + TAB", "Task manager", "/usr/bin/tsk task tui-launch")
+-- tsk-managed end
