@@ -21,9 +21,16 @@ require("hypr.input")
 require("hypr.bindings")
 require("hypr.looknfeel")
 require("hypr.autostart")
+require("hypr.zoom")
 
 -- Toggle config flags dynamically.
 require("default.hypr.toggles")
 
 -- Add any other personal Hyprland configuration below.
 -- o.window("qemu", { workspace = "5" })
+
+-- Chromium's "Hide" on the screen-share bar is a no-op under Wayland.
+-- Omarchy already ships this rule; reinforce with initial_title so chrome
+-- --app / Zoom webapp indicators still leave the current workspace.
+o.window({ title = ".*is sharing.*" }, { workspace = "special silent" })
+o.window({ initial_title = ".*is sharing.*" }, { workspace = "special silent" })
