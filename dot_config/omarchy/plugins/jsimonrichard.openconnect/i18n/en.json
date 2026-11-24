@@ -1,0 +1,14 @@
+{
+  "title": "OpenConnect",
+  "summary": { "one": "%1 of %2 connected", "other": "%1 of %2 connected" },
+  "noProfiles": "No VPN profiles configured",
+  "noProfilesHelp": "Add profiles to ~/.config/ocvpn/profiles.json",
+  "notInstalled": "ocvpn not found",
+  "notInstalledHelp": "Install the ocvpn command so it is on PATH",
+  "statusFailed": "Could not read VPN status",
+  "connecting": "Connecting…",
+  "disconnecting": "Disconnecting…",
+  "connect": "Connect",
+  "disconnect": "Disconnect",
+  "commandFailed": "Command failed"
+}
