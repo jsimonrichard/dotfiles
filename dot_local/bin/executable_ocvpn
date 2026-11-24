@@ -1,0 +1,236 @@
+#!/usr/bin/env bash
+# ocvpn: control OpenConnect VPN profiles (external-browser SSO capable).
+#
+# Profiles: ${XDG_CONFIG_HOME:-~/.config}/ocvpn/profiles.json
+#   { "<id>": { "name": "...", "server": "https://...", "protocol": "anyconnect" } }
+# <id> must match [a-z0-9][a-z0-9-]{0,11}; the tun device is named oc-<id>.
+#
+# Only the tunnel step needs root (pkexec). Authentication runs as the user so
+# the browser opens in the user's session.
+set -euo pipefail
+
+CONFIG="${OCVPN_CONFIG:-${XDG_CONFIG_HOME:-$HOME/.config}/ocvpn/profiles.json}"
+STATEDIR="${XDG_STATE_HOME:-$HOME/.local/state}/ocvpn"
+BROWSER_CMD="${OCVPN_BROWSER:-xdg-open}"
+ID_RE='^[a-z0-9][a-z0-9-]{0,11}$'
+
+die() { echo "ocvpn: $*" >&2; exit 1; }
+
+usage() {
+  cat <<'USAGE'
+Usage: ocvpn <command> [args]
+
+  list                      List configured profiles
+  status [--json] [<id>]    Show connection state (all profiles, or one)
+  connect <id>              Authenticate (browser if needed), then bring the tunnel up
+  disconnect <id>           Bring the tunnel down
+
+Env:
+  OCVPN_CONFIG    profiles file (default ~/.config/ocvpn/profiles.json)
+  OCVPN_BROWSER   external browser executable (default xdg-open)
+USAGE
+}
+
+need_cmd() { command -v "$1" >/dev/null || die "missing required command: $1"; }
+
+# Validates the whole profiles file; any problem is fatal.
+load_profiles() {
+  need_cmd jq
+  [[ -r "$CONFIG" ]] || die "profiles file not found or unreadable: $CONFIG"
+  jq -e --arg re "$ID_RE" '
+    type == "object" and (keys | length) > 0 and
+    all(to_entries[];
+      (.key | test($re)) and
+      (.value | type == "object") and
+      (.value.name   | type == "string" and length > 0) and
+      (.value.server | type == "string" and test("^https://")) and
+      (.value.protocol | type == "string" and length > 0))
+  ' "$CONFIG" >/dev/null \
+    || die "invalid profiles file $CONFIG (each id must match $ID_RE; each profile needs name, https server, protocol)"
+}
+
+profile_field() { # <id> <field>
+  jq -er --arg id "$1" --arg f "$2" '.[$id][$f]' "$CONFIG" 2>/dev/null \
+    || die "unknown profile: $1 (see: ocvpn list)"
+}
+
+pidfile() { echo "$STATEDIR/$1.pid"; }
+ifname() { echo "oc-$1"; }
+
+# openconnect runs as root, so kill -0 would fail with EPERM; check /proc.
+pid_of() { # <id>: prints pid if the tunnel process is alive, else nothing
+  local pf pid
+  pf=$(pidfile "$1")
+  [[ -s "$pf" ]] || return 0
+  pid=$(<"$pf")
+  [[ "$pid" =~ ^[0-9]+$ ]] || return 0
+  [[ -r "/proc/$pid/comm" && "$(<"/proc/$pid/comm")" == openconnect ]] && echo "$pid"
+  return 0
+}
+
+status_json_one() { # <id>
+  local id=$1 pid iface addr4 addr6 info
+  pid=$(pid_of "$id")
+  iface=$(ifname "$id")
+  addr4=""; addr6=""
+  if [[ -n "$pid" ]]; then
+    info=$(ip -j addr show dev "$iface" 2>/dev/null || true)
+    if [[ -n "$info" ]]; then
+      addr4=$(jq -r '[.[0].addr_info[]? | select(.family=="inet")  | .local][0] // ""' <<<"$info")
+      addr6=$(jq -r '[.[0].addr_info[]? | select(.family=="inet6" and .scope=="global") | .local][0] // ""' <<<"$info")
+    fi
+  fi
+  jq -n --arg id "$id" --arg pid "$pid" --arg iface "$iface" --arg a4 "$addr4" --arg a6 "$addr6" \
+    --slurpfile p "$CONFIG" '
+    $p[0][$id] as $x | {
+      id: $id, name: $x.name, server: $x.server, protocol: $x.protocol,
+      connected: ($pid != ""),
+      pid: (if $pid == "" then null else ($pid | tonumber) end),
+      interface: $iface,
+      ipv4: (if $a4 == "" then null else $a4 end),
+      ipv6: (if $a6 == "" then null else $a6 end)
+    }'
+}
+
+cmd_list() {
+  load_profiles
+  jq -r 'to_entries[] | [.key, .value.name, .value.server] | @tsv' "$CONFIG"
+}
+
+cmd_status() {
+  local json=0 only=""
+  while (( $# )); do
+    case "$1" in
+      --json) json=1 ;;
+      -*) die "unknown option: $1" ;;
+      *) [[ -z "$only" ]] || die "status takes at most one profile id"; only=$1 ;;
+    esac
+    shift
+  done
+  load_profiles
+  local ids
+  if [[ -n "$only" ]]; then
+    profile_field "$only" name >/dev/null
+    ids=$only
+  else
+    ids=$(jq -r 'keys[]' "$CONFIG")
+  fi
+  local out
+  out=$(for id in $ids; do status_json_one "$id"; done | jq -s '.')
+  if (( json )); then
+    jq '.' <<<"$out"
+  else
+    jq -r '.[] | [.id, .name, (if .connected then "up" else "down" end), (.ipv4 // "-")] | @tsv' <<<"$out" \
+      | column -t -s $'\t'
+  fi
+}
+
+authenticate() { # <id>: prints COOKIE/CONNECT_URL/FINGERPRINT/RESOLVE lines
+  local id=$1 server protocol browser_path
+  server=$(profile_field "$id" server)
+  protocol=$(profile_field "$id" protocol)
+  need_cmd openconnect
+  need_cmd "$BROWSER_CMD"
+  # openconnect execs the browser directly (no PATH lookup): must be absolute.
+  browser_path=$(command -v "$BROWSER_CMD")
+  openconnect --authenticate --protocol="$protocol" --external-browser="$browser_path" "$server"
+}
+
+cmd_connect() {
+  local id=${1:-}
+  [[ -n "$id" ]] || die "connect needs a profile id"
+  load_profiles
+  profile_field "$id" name >/dev/null
+  need_cmd pkexec
+
+  local existing
+  existing=$(pid_of "$id")
+  [[ -z "$existing" ]] || die "$id is already connected (pid $existing)"
+
+  mkdir -p "$STATEDIR"
+  echo "ocvpn: authenticating $id (complete sign-in in the browser if prompted)..." >&2
+  local auth_out
+  auth_out=$(authenticate "$id") || die "authentication failed for $id"
+
+  # Parse instead of eval: accept only the four known variables, single-quoted.
+  local COOKIE="" CONNECT_URL="" FINGERPRINT="" RESOLVE="" line key val
+  while IFS= read -r line; do
+    if [[ "$line" =~ ^(COOKIE|CONNECT_URL|FINGERPRINT|RESOLVE)=\'([^\']*)\'$ ]]; then
+      key=${BASH_REMATCH[1]}; val=${BASH_REMATCH[2]}
+      printf -v "$key" '%s' "$val"
+    fi
+  done <<<"$auth_out"
+  [[ -n "$COOKIE" ]]      || die "authentication did not return COOKIE"
+  [[ -n "$CONNECT_URL" ]] || die "authentication did not return CONNECT_URL"
+  [[ -n "$FINGERPRINT" ]] || die "authentication did not return FINGERPRINT"
+
+  local resolve_args=()
+  [[ -z "$RESOLVE" ]] || resolve_args=(--resolve "$RESOLVE")
+
+  local pf; pf=$(pidfile "$id")
+  rm -f "$pf"
+  echo "ocvpn: bringing $id up (polkit prompt)..." >&2
+  printf '%s' "$COOKIE" | pkexec openconnect \
+    --protocol="$(profile_field "$id" protocol)" \
+    --cookie-on-stdin \
+    --servercert "$FINGERPRINT" \
+    "${resolve_args[@]}" \
+    --interface="$(ifname "$id")" \
+    --background \
+    --pid-file="$pf" \
+    --syslog \
+    "$CONNECT_URL" \
+    || die "tunnel start failed for $id (polkit dismissed/denied, or openconnect error)"
+
+  # --background writes the pidfile after forking; wait for it.
+  local _
+  for _ in $(seq 1 50); do
+    [[ -s "$pf" ]] && break
+    sleep 0.1
+  done
+  [[ -s "$pf" ]] || die "tunnel started but pidfile $pf is missing or unreadable"
+  [[ -n "$(pid_of "$id")" ]] || die "pidfile $pf does not point at a running openconnect"
+
+  cmd_status "$id"
+}
+
+cmd_disconnect() {
+  local id=${1:-}
+  [[ -n "$id" ]] || die "disconnect needs a profile id"
+  load_profiles
+  profile_field "$id" name >/dev/null
+  need_cmd pkexec
+
+  local pid
+  pid=$(pid_of "$id")
+  if [[ -z "$pid" ]]; then
+    echo "ocvpn: $id is already down"
+    return 0
+  fi
+  # pkexec exits non-zero if the polkit prompt is dismissed; set -e surfaces it.
+  pkexec kill "$pid"
+  local _
+  for _ in $(seq 1 30); do
+    [[ -d "/proc/$pid" ]] || break
+    sleep 0.1
+  done
+  [[ ! -d "/proc/$pid" ]] || die "openconnect (pid $pid) did not exit after SIGTERM"
+  rm -f "$(pidfile "$id")"
+  echo "ocvpn: $id disconnected"
+}
+
+main() {
+  local cmd=${1:-}
+  shift || true
+  case "$cmd" in
+    list) cmd_list "$@" ;;
+    status) cmd_status "$@" ;;
+    connect|up) cmd_connect "$@" ;;
+    disconnect|down) cmd_disconnect "$@" ;;
+    -h|--help|help) usage ;;
+    "") usage >&2; exit 1 ;;
+    *) echo "ocvpn: unknown command: $cmd" >&2; usage >&2; exit 1 ;;
+  esac
+}
+
+main "$@"

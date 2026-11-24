@@ -1,0 +1,7 @@
+{
+  "purdue": {
+    "name": "Purdue VPN",
+    "server": "https://webvpn.purdue.edu",
+    "protocol": "anyconnect"
+  }
+}
